@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Girl</title>
+  <style>
+    :root {
+      /* 🔴 NAMA FILE FOTO LOKAL 🔴 */
+      --lock-bg-img: url('cy.jpeg'); 
+      --desktop-bg-img: url('bdyy.jpeg'); 
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffb6c1;
+      position: relative;
+    }
+
+    /* --- LOCK SCREEN --- */
+    #lock-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+      overflow: hidden;
+    }
+
+    .lock-bg-blur {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: var(--lock-bg-img);
+      background-size: cover;
+      background-position: center;
+      filter: blur(15px) brightness(0.7);
+      transform: scale(1.1);
+      z-index: 1;
+    }
+
+    .lock-bg-photo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 2;
+    }
+
+    .lock-card {
+      position: relative;
+      z-index: 3;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 320px;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .avatar-icon {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    .lock-card h2 {
+      color: #d81b60;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .lock-card p {
+      color: #555;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 2px solid #ffb6c1;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-group input:focus {
+      border-color: #ff69b4;
+    }
+
+    .unlock-btn {
+      width: 100%;
+      padding: 10px;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.4);
+      transition: transform 0.1s, background 0.3s;
+    }
+
+    .unlock-btn:active {
+      transform: scale(0.98);
+    }
+
+    .error-msg {
+      color: #e91e63;
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+      font-weight: bold;
+    }
+
+    /* --- DESKTOP SCREEN --- */
+    #desktop {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background-image: var(--desktop-bg-img);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .desktop-icons {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      grid-template-rows: repeat(auto-fill, minmax(90px, 1fr));
+      grid-auto-flow: column;
+      gap: 15px;
+      padding: 20px;
+      height: calc(100% - 45px);
+      width: fit-content;
+    }
+
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 85px;
+      height: 85px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .icon-item:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .icon-item span.emoji {
+      font-size: 36px;
+      margin-bottom: 5px;
+    }
+
+    .icon-item span.label {
+      color: white;
+      font-size: 11px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* --- TASKBAR --- */
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .start-btn {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 6px 15px;
+      border-radius: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .taskbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .music-btn {
+      background: rgba(255, 105, 180, 0.2);
+      border: 1px solid #ff69b4;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .taskbar-time {
+      font-size: 12px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    /* --- WINDOW SYSTEM --- */
+    .window {
+      position: absolute;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      min-width: 320px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 2px solid #ff69b4;
+      z-index: 100;
+    }
+
+    .window-header {
+      background: #ff69b4;
+      color: white;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: #e91e63;
+      border: none;
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 11px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    .window-body {
+      padding: 15px;
+      max-height: 420px;
+      overflow-y: auto;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .notepad-body {
+      background: #fff0f5;
+      font-family: 'Courier New', Courier, monospace;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* --- POLAROID STRIP --- */
+    .polaroid-strip {
+      background: #ffffff;
+      padding: 8px 8px 12px 8px;
+      margin: 15px auto 5px auto;
+      width: 200px;
+      border-radius: 6px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #eed9e1;
+    }
+
+    .polaroid-strip img {
+      width: 100%;
+      height: auto;
+      max-height: 320px;
+      object-fit: contain;
+      border-radius: 3px;
+      display: block;
+    }
+
+    .polaroid-caption {
+      text-align: center;
+      font-family: 'Segoe UI', cursive, sans-serif;
+      font-size: 10px;
+      color: #888;
+      letter-spacing: 1px;
+      margin-top: 3px;
+    }
+
+    /* --- POPUP BIRTHDAY GIRL --- */
+    .bday-popup-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 5px;
+    }
+
+    .bday-frame-wrapper {
+      position: relative;
+      display: inline-block;
+      padding: 12px;
+    }
+
+    .bday-frame-img {
+      width: 190px;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
+      border: 3px solid #ff69b4;
+      display: block;
+    }
+
+    .floating-heart {
+      position: absolute;
+      font-size: 20px;
+      animation: pulseGlow 1.5s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+
+    .heart-tl { top: -2px; left: -2px; }
+    .heart-tr { top: -2px; right: -2px; }
+    .heart-bl { bottom: -2px; left: -2px; }
+    .heart-br { bottom: -2px; right: -2px; }
+    .heart-ml { top: 50%; left: -8px; transform: translateY(-50%); }
+    .heart-mr { top: 50%; right: -8px; transform: translateY(-50%); }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(0.9) rotate(-8deg); filter: drop-shadow(0 0 2px #ff1493); }
+      100% { transform: scale(1.25) rotate(8deg); filter: drop-shadow(0 0 8px #ff69b4); }
+    }
+
+    .bday-caption {
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #d81b60;
+      letter-spacing: 1.5px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .terminal-body {
+      background: #1e1e1e;
+      color: #00ff66;
+      font-family: 'Courier New', Courier, monospace;
+      min-height: 220px;
+    }
+
+    .terminal-input-line {
+      display: flex;
+      margin-top: 5px;
+    }
+
+    .terminal-input-line input {
+      background: transparent;
+      border: none;
+      color: #00ff66;
+      font-family: inherit;
+      outline: none;
+      flex: 1;
+      margin-left: 5px;
+    }
+
+    .heart-trail {
+      position: absolute;
+      pointer-events: none;
+      color: #ff1493;
+      font-size: 14px;
+      animation: floatUp 1s linear forwards;
+      z-index: 99999;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -80px) scale(1.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🎵 ELEMEN AUDIO / MUSIK 🎵 -->
+  <audio id="bg-music" src="song1.mp3" preload="auto" loop></audio>
+
+  <!-- 1. LOCK SCREEN -->
+  <div id="lock-screen">
+    <div class="lock-bg-blur"></div>
+    <img src="cy.jpeg" class="lock-bg-photo" alt="Lockscreen Photo">
+
+    <div class="lock-card">
+      <div class="avatar-icon">🧸</div>
+      <h2>Welcome back, Love!</h2>
+      <p>OS is currently locked</p>
+      
+      <div class="input-group">
+        <input type="password" id="pass-input" placeholder=" take a guess!!">
+      </div>
+      
+      <button class="unlock-btn" onclick="checkPassword()">Unlock My Heart</button>
+      <div id="error-msg" class="error-msg">Password salah! Petunjuk: hari spesialmu</div>
+    </div>
+  </div>
+
+  <!-- 2. DESKTOP SCREEN -->
+  <div id="desktop">
+    <div class="desktop-icons">
+      <div class="icon-item" onclick="openWindow('letter-win')">
+        <span class="emoji">💌</span>
+        <span class="label">Message for you</span>
+      </div>
+      <div class="icon-item" onclick="openWindow('terminal-win')">
+        <span class="emoji">💻</span>
+        <span class="label">Heart Terminal</span>
+      </div>
+      <div class="icon-item" onclick="openWindow('virus-win')">
+        <span class="emoji">🛡️</span>
+        <span class="label">Virus Scan</span>
+      </div>
+      <div class="icon-item" onclick="openWindow('bin-win')">
+        <span class="emoji">🗑️</span>
+        <span class="label">Recycle Bin</span>
+      </div>
+    </div>
+
+    <!-- WINDOW 1: LOVE LETTER -->
+    <div id="letter-win" class="window" style="top: 80px; left: 100px; width: 380px;">
+      <div class="window-header">
+        <span>letter_from_me.txt - Notepad</span>
+        <button class="close-btn" onclick="closeWindow('letter-win')">✕</button>
+      </div>
+      <div class="window-body notepad-body">
+Dear aiss,
+
+Selamat ulang tahunnn, gurl!!!
+thank you for always being a good friend for me, welcome to the 20s gang btw🤣🤙
+diumur yang sudah berkepala dua ini semoga bisa makin berkembang dan sukses,
+jangan galau-galau juga wkwk😅 tapi, i'm all ears kalo mo curhat
+happy-happy terus, dilancarkan kuliahnya, rezekinya dan semuanya
+pokoknya yang baik-baik aja deh buat kauuu cantikkkk + KITA HARUS BERTEMAN SELAMANYAAAA
+
+ohiya nanti ketemuan yaaaa mmuahhhh😘
+
+Dengan cinta,
+- your bff, farah 💕
+
+        <!-- POLAROID STRIP DIKECILKAN -->
+        <div class="polaroid-strip">
+          <img src="11.jpg" alt="Memories 1">
+          <div class="polaroid-caption">✨ besties forever ✨</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 2: HEART TERMINAL -->
+    <div id="terminal-win" class="window" style="top: 120px; left: 250px; width: 420px;">
+      <div class="window-header">
+        <span>HeartOS_Terminal.sh</span>
+        <button class="close-btn" onclick="closeWindow('terminal-win')">✕</button>
+      </div>
+      <div class="window-body terminal-body">
+        <div>HEART_OS TERMINAL [Version 2.0]</div>
+        <div>Ketik <b style="color:yellow">'help'</b> untuk melihat daftar perintah.</div>
+        <br>
+        <div id="terminal-output"></div>
+        <div class="terminal-input-line">
+          <span>heart:~$</span>
+          <input type="text" id="term-input" autofocus onkeydown="handleTerminal(event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 3: VIRUS SCAN ALERT -->
+    <div id="virus-win" class="window" style="top: 180px; left: 180px; width: 320px;">
+      <div class="window-header">
+        <span>System Alert</span>
+        <button class="close-btn" onclick="closeWindow('virus-win')">✕</button>
+      </div>
+      <div class="window-body" style="text-align: center;">
+        <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
+        <p style="font-weight: bold; color: #d81b60;">Cuteness Virus Detected!</p>
+        <p style="margin-top: 5px; font-size: 12px; color: #555;">Virus keimutanmu telah menginfeksi 100% CPU.</p>
+        <button class="unlock-btn" style="margin-top: 15px;" onclick="alert('Action Failed: Kamu terlalu imut untuk disembuhkan! ❤️')">Repair Now</button>
+      </div>
+    </div>
+
+    <!-- WINDOW 4: RECYCLE BIN -->
+    <div id="bin-win" class="window" style="top: 150px; left: 320px; width: 300px;">
+      <div class="window-header">
+        <span>Recycle Bin</span>
+        <button class="close-btn" onclick="closeWindow('bin-win')">✕</button>
+      </div>
+      <div class="window-body" style="text-align: center;">
+        <div style="font-size: 35px;">🗑️</div>
+        <p style="margin-top: 10px; font-weight: bold; color: #e91e63;">Error 404!</p>
+        <p style="font-size: 12px; color: #666; margin-top: 5px;">TIDAK ADA KENANGAN YANG BISA DIHAPUS BECAUSE YOU'RE IMPORTANT TO ME SIS! ❤️</p>
+      </div>
+    </div>
+
+    <!-- WINDOW 5: POPUP KHUSUS 'BIRTHDAY GIRL' -->
+    <div id="bday-popup-win" class="window" style="top: 90px; left: 200px; width: 340px;">
+      <div class="window-header">
+        <span>✨ Queen of The Day ✨</span>
+        <button class="close-btn" onclick="closeWindow('bday-popup-win')">✕</button>
+      </div>
+      <div class="window-body">
+        <div class="bday-popup-container">
+          <div class="bday-frame-wrapper">
+            <span class="floating-heart heart-tl">💖</span>
+            <span class="floating-heart heart-tr">💕</span>
+            <span class="floating-heart heart-ml">💗</span>
+            <span class="floating-heart heart-mr">💓</span>
+            <span class="floating-heart heart-bl">💞</span>
+            <span class="floating-heart heart-br">💘</span>
+            
+            <img src="13.jpg" class="bday-frame-img" alt="The Birthday Girl">
+          </div>
+          
+          <div class="bday-caption">the birthday girl</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKBAR -->
+    <div class="taskbar">
+      <button class="start-btn" onclick="alert('Start Menu is busy thinking about you! ❤️')">🌸 Start</button>
+      <div class="taskbar-controls">
+        <button class="music-btn" id="music-toggle" onclick="toggleMusic()" title="Play/Pause Lagu">🎵</button>
+        <div class="taskbar-time" id="clock">00:00 PM</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const bgMusic = document.getElementById('bg-music');
+    let isMusicPlaying = false;
+
+    // --- 1. PASSWORD CHECK & PLAY MUSIC ---
+    function checkPassword() {
+      const input = document.getElementById('pass-input').value.trim();
+      if (input === "25082026" || input === "25/08/2026") {
+        
+        // Putar lagu saat tombol diklik
+        bgMusic.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('music-toggle').innerText = '🔊';
+        }).catch(err => {
+          console.warn("Autoplay ditolak oleh browser: ", err);
+        });
+
+        document.getElementById('lock-screen').style.opacity = "0";
+        setTimeout(() => {
+          document.getElementById('lock-screen').style.display = "none";
+          document.getElementById('desktop').style.display = "block";
+        }, 500);
+      } else {
+        document.getElementById('error-msg').style.display = "block";
+      }
+    }
+
+    // Toggle Play/Pause Musik via tombol taskbar
+    function toggleMusic() {
+      if (isMusicPlaying) {
+        bgMusic.pause();
+        isMusicPlaying = false;
+        document.getElementById('music-toggle').innerText = '🔇';
+      } else {
+        bgMusic.play();
+        isMusicPlaying = true;
+        document.getElementById('music-toggle').innerText = '🔊';
+      }
+    }
+
+    // --- 2. WINDOW MANAGEMENT ---
+    function openWindow(id) {
+      const win = document.getElementById(id);
+      win.style.display = "flex";
+      document.querySelectorAll('.window').forEach(w => w.style.zIndex = "100");
+      win.style.zIndex = "101";
+    }
+
+    function closeWindow(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    // Draggable windows
+    document.querySelectorAll('.window').forEach(win => {
+      const header = win.querySelector('.window-header');
+      let isDragging = false, startX, startY, initialLeft, initialTop;
+
+      header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = win.offsetLeft;
+        initialTop = win.offsetTop;
+        
+        document.querySelectorAll('.window').forEach(w => w.style.zIndex = "100");
+        win.style.zIndex = "101";
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        win.style.left = `${initialLeft + dx}px`;
+        win.style.top = `${initialTop + dy}px`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    });
+
+    // --- 3. TERMINAL COMMANDS ---
+    function handleTerminal(e) {
+      if (e.key === 'Enter') {
+        const input = e.target.value.trim().toLowerCase();
+        const output = document.getElementById('terminal-output');
+        e.target.value = '';
+
+        let response = '';
+        if (input === 'help') {
+          response = "Commands: <br>- <b>status</b> : Cek status <br>- <b>hug</b> : Kirim pelukan<br>- <b>birthday girl</b> : Kejutan spesial! 👑<br>- <b>clear</b> : Bersihkan layar<br>- <b>i love you</b> : Rahasia";
+        } else if (input === 'status') {
+          response = "STATUS: 100% sisterrr ❤️";
+        } else if (input === 'hug') {
+          response = "pelukan virtual berhasil dikirimkan!🤗";
+        } else if (input === 'birthday girl') {
+          openWindow('bday-popup-win');
+          response = "👑 The Birthday Girl! ✨💖";
+        } else if (input === 'i love you') {
+          response = "I love you my dear friend! 🥰✨";
+        } else if (input === 'clear') {
+          output.innerHTML = '';
+          return;
+        } else {
+          response = `Command tidak dikenali: '${input}'. Ketik 'help' untuk bantuan.`;
+        }
+
+        output.innerHTML += `<div>heart:~$ ${input}</div><div>${response}</div><br>`;
+        const body = output.parentElement;
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
+    // --- 4. HEART TRAIL EFFECT ---
+    document.addEventListener('mousemove', (e) => {
+      if (Math.random() < 0.15) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-trail';
+        heart.innerHTML = '💖';
+        heart.style.left = `${e.clientX}px`;
+        heart.style.top = `${e.clientY}px`;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1000);
+      }
+    });
+
+    // --- 5. CLOCK ---
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('clock').innerText = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
