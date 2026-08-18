@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Birthday Girl</title>
   <style>
     :root {
@@ -17,11 +17,13 @@
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       width: 100vw;
       height: 100vh;
+      height: 100dvh; /* Mendukung dynamic viewport mobile */
       overflow: hidden;
       background: #ffb6c1;
       position: relative;
@@ -34,12 +36,14 @@
       left: 0;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 9999;
       transition: opacity 0.5s ease;
       overflow: hidden;
+      padding: 15px;
     }
 
     .lock-bg-blur {
@@ -69,31 +73,32 @@
     .lock-card {
       position: relative;
       z-index: 3;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(10px);
-      padding: 30px;
+      padding: 25px 20px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
       text-align: center;
-      width: 320px;
+      width: 100%;
+      max-width: 320px;
       border: 2px solid rgba(255, 255, 255, 0.8);
     }
 
     .avatar-icon {
-      font-size: 50px;
-      margin-bottom: 10px;
+      font-size: 45px;
+      margin-bottom: 8px;
     }
 
     .lock-card h2 {
       color: #d81b60;
-      font-size: 20px;
-      margin-bottom: 5px;
+      font-size: 19px;
+      margin-bottom: 4px;
     }
 
     .lock-card p {
       color: #555;
       font-size: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .input-group {
@@ -106,7 +111,7 @@
       border: 2px solid #ffb6c1;
       border-radius: 20px;
       text-align: center;
-      font-size: 16px;
+      font-size: 15px;
       outline: none;
       transition: border-color 0.3s;
     }
@@ -124,6 +129,7 @@
       border-radius: 20px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 14px;
       box-shadow: 0 4px 10px rgba(255, 105, 180, 0.4);
       transition: transform 0.1s, background 0.3s;
     }
@@ -153,13 +159,13 @@
 
     .desktop-icons {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-      grid-template-rows: repeat(auto-fill, minmax(90px, 1fr));
-      grid-auto-flow: column;
-      gap: 15px;
-      padding: 20px;
-      height: calc(100% - 45px);
-      width: fit-content;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      grid-template-rows: repeat(auto-fill, minmax(85px, 1fr));
+      grid-auto-flow: row;
+      gap: 10px;
+      padding: 15px;
+      height: calc(100% - 50px);
+      width: 100%;
     }
 
     .icon-item {
@@ -167,20 +173,20 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 85px;
-      height: 85px;
-      border-radius: 10px;
+      width: 78px;
+      height: 80px;
+      border-radius: 12px;
       cursor: pointer;
       transition: background 0.2s;
     }
 
-    .icon-item:hover {
+    .icon-item:hover, .icon-item:active {
       background: rgba(255, 255, 255, 0.3);
     }
 
     .icon-item span.emoji {
-      font-size: 36px;
-      margin-bottom: 5px;
+      font-size: 32px;
+      margin-bottom: 4px;
     }
 
     .icon-item span.label {
@@ -189,6 +195,7 @@
       text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
       text-align: center;
       font-weight: 600;
+      line-height: 1.2;
     }
 
     /* --- TASKBAR --- */
@@ -197,39 +204,40 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 45px;
-      background: rgba(255, 255, 255, 0.85);
+      height: 50px;
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(10px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 15px;
+      padding: 0 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.5);
+      z-index: 999;
     }
 
     .start-btn {
       background: #ff69b4;
       color: white;
       border: none;
-      padding: 6px 15px;
+      padding: 6px 14px;
       border-radius: 15px;
       font-weight: bold;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     .taskbar-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .music-btn {
       background: rgba(255, 105, 180, 0.2);
       border: 1px solid #ff69b4;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -238,7 +246,7 @@
     }
 
     .taskbar-time {
-      font-size: 12px;
+      font-size: 11px;
       color: #333;
       font-weight: 600;
     }
@@ -247,47 +255,53 @@
     .window {
       position: absolute;
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-      min-width: 320px;
       display: none;
       flex-direction: column;
       overflow: hidden;
       border: 2px solid #ff69b4;
       z-index: 100;
+      width: 380px;
+      max-width: 92vw;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     .window-header {
       background: #ff69b4;
       color: white;
-      padding: 8px 12px;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: move;
       font-size: 13px;
       font-weight: bold;
+      touch-action: none;
     }
 
     .close-btn {
       background: #e91e63;
       border: none;
       color: white;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 11px;
-      line-height: 20px;
+      font-size: 12px;
+      line-height: 22px;
       text-align: center;
     }
 
     .window-body {
       padding: 15px;
-      max-height: 420px;
+      max-height: 60vh;
       overflow-y: auto;
       font-size: 13px;
       color: #333;
+      -webkit-overflow-scrolling: touch;
     }
 
     .notepad-body {
@@ -302,7 +316,8 @@
       background: #ffffff;
       padding: 8px 8px 12px 8px;
       margin: 15px auto 5px auto;
-      width: 200px;
+      width: 190px;
+      max-width: 85%;
       border-radius: 6px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
       display: flex;
@@ -315,7 +330,7 @@
     .polaroid-strip img {
       width: 100%;
       height: auto;
-      max-height: 320px;
+      max-height: 280px;
       object-fit: contain;
       border-radius: 3px;
       display: block;
@@ -342,12 +357,13 @@
     .bday-frame-wrapper {
       position: relative;
       display: inline-block;
-      padding: 12px;
+      padding: 10px;
     }
 
     .bday-frame-img {
-      width: 190px;
-      height: 240px;
+      width: 180px;
+      height: 230px;
+      max-width: 65vw;
       object-fit: cover;
       border-radius: 15px;
       box-shadow: 0 8px 20px rgba(255, 105, 180, 0.4);
@@ -357,7 +373,7 @@
 
     .floating-heart {
       position: absolute;
-      font-size: 20px;
+      font-size: 18px;
       animation: pulseGlow 1.5s infinite alternate ease-in-out;
       pointer-events: none;
     }
@@ -366,8 +382,8 @@
     .heart-tr { top: -2px; right: -2px; }
     .heart-bl { bottom: -2px; left: -2px; }
     .heart-br { bottom: -2px; right: -2px; }
-    .heart-ml { top: 50%; left: -8px; transform: translateY(-50%); }
-    .heart-mr { top: 50%; right: -8px; transform: translateY(-50%); }
+    .heart-ml { top: 50%; left: -6px; transform: translateY(-50%); }
+    .heart-mr { top: 50%; right: -6px; transform: translateY(-50%); }
 
     @keyframes pulseGlow {
       0% { transform: scale(0.9) rotate(-8deg); filter: drop-shadow(0 0 2px #ff1493); }
@@ -375,11 +391,11 @@
     }
 
     .bday-caption {
-      margin-top: 15px;
+      margin-top: 12px;
       font-size: 15px;
       font-weight: bold;
       color: #d81b60;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
@@ -387,7 +403,7 @@
       background: #1e1e1e;
       color: #00ff66;
       font-family: 'Courier New', Courier, monospace;
-      min-height: 220px;
+      min-height: 200px;
     }
 
     .terminal-input-line {
@@ -403,6 +419,7 @@
       outline: none;
       flex: 1;
       margin-left: 5px;
+      font-size: 14px;
     }
 
     .heart-trail {
@@ -417,6 +434,19 @@
     @keyframes floatUp {
       0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
       100% { transform: translate(-50%, -80px) scale(1.5); opacity: 0; }
+    }
+
+    /* Penyesuaian khusus tampilan Laptop / Komputer */
+    @media (min-width: 768px) {
+      .window {
+        width: 380px;
+        transform: none;
+      }
+      #letter-win { top: 70px; left: 80px; }
+      #terminal-win { top: 110px; left: 220px; width: 420px; }
+      #virus-win { top: 160px; left: 160px; width: 320px; }
+      #bin-win { top: 130px; left: 300px; width: 300px; }
+      #bday-popup-win { top: 80px; left: 240px; width: 340px; }
     }
   </style>
 </head>
@@ -466,7 +496,7 @@
     </div>
 
     <!-- WINDOW 1: LOVE LETTER -->
-    <div id="letter-win" class="window" style="top: 80px; left: 100px; width: 380px;">
+    <div id="letter-win" class="window">
       <div class="window-header">
         <span>letter_from_me.txt - Notepad</span>
         <button class="close-btn" onclick="closeWindow('letter-win')">✕</button>
@@ -486,7 +516,7 @@ ohiya nanti ketemuan yaaaa mmuahhhh😘
 Dengan cinta,
 - your bff, farah 💕
 
-        <!-- POLAROID STRIP DIKECILKAN -->
+        <!-- POLAROID STRIP -->
         <div class="polaroid-strip">
           <img src="11.jpg" alt="Memories 1">
           <div class="polaroid-caption">✨ besties forever ✨</div>
@@ -495,7 +525,7 @@ Dengan cinta,
     </div>
 
     <!-- WINDOW 2: HEART TERMINAL -->
-    <div id="terminal-win" class="window" style="top: 120px; left: 250px; width: 420px;">
+    <div id="terminal-win" class="window">
       <div class="window-header">
         <span>HeartOS_Terminal.sh</span>
         <button class="close-btn" onclick="closeWindow('terminal-win')">✕</button>
@@ -513,7 +543,7 @@ Dengan cinta,
     </div>
 
     <!-- WINDOW 3: VIRUS SCAN ALERT -->
-    <div id="virus-win" class="window" style="top: 180px; left: 180px; width: 320px;">
+    <div id="virus-win" class="window">
       <div class="window-header">
         <span>System Alert</span>
         <button class="close-btn" onclick="closeWindow('virus-win')">✕</button>
@@ -527,7 +557,7 @@ Dengan cinta,
     </div>
 
     <!-- WINDOW 4: RECYCLE BIN -->
-    <div id="bin-win" class="window" style="top: 150px; left: 320px; width: 300px;">
+    <div id="bin-win" class="window">
       <div class="window-header">
         <span>Recycle Bin</span>
         <button class="close-btn" onclick="closeWindow('bin-win')">✕</button>
@@ -540,7 +570,7 @@ Dengan cinta,
     </div>
 
     <!-- WINDOW 5: POPUP KHUSUS 'BIRTHDAY GIRL' -->
-    <div id="bday-popup-win" class="window" style="top: 90px; left: 200px; width: 340px;">
+    <div id="bday-popup-win" class="window">
       <div class="window-header">
         <span>✨ Queen of The Day ✨</span>
         <button class="close-btn" onclick="closeWindow('bday-popup-win')">✕</button>
@@ -582,7 +612,6 @@ Dengan cinta,
       const input = document.getElementById('pass-input').value.trim();
       if (input === "25082026" || input === "25/08/2026") {
         
-        // Putar lagu saat tombol diklik
         bgMusic.play().then(() => {
           isMusicPlaying = true;
           document.getElementById('music-toggle').innerText = '🔊';
@@ -619,39 +648,71 @@ Dengan cinta,
       win.style.display = "flex";
       document.querySelectorAll('.window').forEach(w => w.style.zIndex = "100");
       win.style.zIndex = "101";
+
+      // Pada layar HP kecil, reset posisi agar pas di tengah
+      if (window.innerWidth < 768) {
+        win.style.top = "50px";
+        win.style.left = "50%";
+        win.style.transform = "translateX(-50%)";
+      }
     }
 
     function closeWindow(id) {
       document.getElementById(id).style.display = "none";
     }
 
-    // Draggable windows
+    // Draggable windows (Mendukung Mouse di Komputer & Touchscreen di HP)
     document.querySelectorAll('.window').forEach(win => {
       const header = win.querySelector('.window-header');
       let isDragging = false, startX, startY, initialLeft, initialTop;
 
-      header.addEventListener('mousedown', (e) => {
+      const startDrag = (clientX, clientY) => {
         isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+        startX = clientX;
+        startY = clientY;
         initialLeft = win.offsetLeft;
         initialTop = win.offsetTop;
         
+        // Hapus transformasi translate tengah saat mulai digeser
+        win.style.transform = "none";
+        win.style.left = `${initialLeft}px`;
+        win.style.top = `${initialTop}px`;
+
         document.querySelectorAll('.window').forEach(w => w.style.zIndex = "100");
         win.style.zIndex = "101";
-      });
+      };
 
-      document.addEventListener('mousemove', (e) => {
+      const moveDrag = (clientX, clientY) => {
         if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
         win.style.left = `${initialLeft + dx}px`;
         win.style.top = `${initialTop + dy}px`;
-      });
+      };
 
-      document.addEventListener('mouseup', () => {
+      const endDrag = () => {
         isDragging = false;
-      });
+      };
+
+      // Event Mouse (Desktop)
+      header.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+      document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+      document.addEventListener('mouseup', endDrag);
+
+      // Event Touch (HP / Tablet)
+      header.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', endDrag);
     });
 
     // --- 3. TERMINAL COMMANDS ---
@@ -686,18 +747,26 @@ Dengan cinta,
       }
     }
 
-    // --- 4. HEART TRAIL EFFECT ---
+    // --- 4. HEART TRAIL EFFECT (Touch & Mouse) ---
+    const createHeart = (x, y) => {
+      const heart = document.createElement('div');
+      heart.className = 'heart-trail';
+      heart.innerHTML = '💖';
+      heart.style.left = `${x}px`;
+      heart.style.top = `${y}px`;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    };
+
     document.addEventListener('mousemove', (e) => {
-      if (Math.random() < 0.15) {
-        const heart = document.createElement('div');
-        heart.className = 'heart-trail';
-        heart.innerHTML = '💖';
-        heart.style.left = `${e.clientX}px`;
-        heart.style.top = `${e.clientY}px`;
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 1000);
-      }
+      if (Math.random() < 0.15) createHeart(e.clientX, e.clientY);
     });
+
+    document.addEventListener('touchmove', (e) => {
+      if (Math.random() < 0.15 && e.touches.length > 0) {
+        createHeart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
 
     // --- 5. CLOCK ---
     function updateClock() {
